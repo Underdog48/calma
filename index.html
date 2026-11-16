@@ -105,6 +105,26 @@
     color: #fff8f3;
   }
 
+  .snd {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .8);
+    background: rgba(255, 255, 255, .55);
+    color: var(--muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color .2s, background .2s;
+  }
+  .snd:hover { background: rgba(255, 255, 255, .85); }
+  .snd .off { display: none; }
+  .snd[aria-pressed="false"] .on { display: none; }
+  .snd[aria-pressed="false"] .off { display: block; }
+  .snd[aria-pressed="false"] { color: #c2a89e; }
+
   .head { padding: 6px 2px 2px; }
   .head h1 {
     margin: 0;
@@ -420,6 +440,89 @@
   .step.done .n { background: var(--accent); color: #fff8f3; }
   .step.done .lbl { color: var(--muted); }
 
+  /* ---------- games ---------- */
+  .subtabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: -2px 0 16px;
+  }
+  .subtabs button {
+    appearance: none;
+    font: inherit;
+    font-size: .82rem;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: #fffdfb;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .22s, color .22s, border-color .22s, transform .16s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .subtabs button:active { transform: scale(.96); }
+  .subtabs button.on {
+    background: rgba(194, 100, 80, .12);
+    border-color: rgba(194, 100, 80, .35);
+    color: var(--accent);
+  }
+  .game { display: none; }
+  .game.on { display: block; animation: rise .4s cubic-bezier(.2, .7, .3, 1) both; }
+
+  .surf {
+    display: block;
+    width: 100%;
+    height: min(58vw, 300px);
+    border-radius: 18px;
+    background: #fffdfb;
+    border: 1px solid var(--line);
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .sky {
+    position: relative;
+    height: min(62vw, 320px);
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: radial-gradient(120% 100% at 50% 0%, #fff8f2 0%, #fbeadd 58%, #f6ddcd 100%);
+    overflow: hidden;
+    touch-action: manipulation;
+  }
+  .catch-count {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--accent);
+    opacity: .85;
+    pointer-events: none;
+  }
+  .light {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, #fffdf8 0%, #ffdcbc 42%, #e9a179 100%);
+    box-shadow: 0 0 20px 3px rgba(233, 161, 121, .42);
+    cursor: pointer;
+    animation: float 6s linear forwards;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .light.caught {
+    animation: snap .3s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes float {
+    0%   { transform: scale(.7); opacity: 0; }
+    14%  { opacity: 1; }
+    68%  { opacity: 1; }
+    100% { transform: translateY(-74px) scale(1.08); opacity: 0; }
+  }
+  @keyframes snap {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+
   /* ---------- now (cool-down timer) ---------- */
   .timer-wrap {
     position: relative;
@@ -499,6 +602,16 @@
 
 <main class="shell">
   <div class="topbar">
+    <button type="button" class="snd" id="sndBtn" aria-pressed="true" aria-label="sonido">
+      <svg class="on" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"></path>
+        <path d="M16.2 8.8a4.6 4.6 0 0 1 0 6.4"></path>
+      </svg>
+      <svg class="off" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5H4z"></path>
+        <path d="M16.5 9.5l4 5M20.5 9.5l-4 5"></path>
+      </svg>
+    </button>
     <div class="lang" role="group" aria-label="idioma / language">
       <button type="button" data-lang="es">ES</button>
       <button type="button" data-lang="en">EN</button>
@@ -514,7 +627,7 @@
     <button type="button" data-panel="now" class="on" role="tab" aria-selected="true" data-t="tabNow"></button>
     <button type="button" data-panel="letter" role="tab" aria-selected="false" data-t="tabLetter"></button>
     <button type="button" data-panel="breathe" role="tab" aria-selected="false" data-t="tabBreathe"></button>
-    <button type="button" data-panel="pop" role="tab" aria-selected="false" data-t="tabPop"></button>
+    <button type="button" data-panel="play" role="tab" aria-selected="false" data-t="tabPlay"></button>
     <button type="button" data-panel="vent" role="tab" aria-selected="false" data-t="tabVent"></button>
     <button type="button" data-panel="ground" role="tab" aria-selected="false" data-t="tabGround"></button>
   </nav>
@@ -562,15 +675,39 @@
     </div>
   </section>
 
-  <!-- ============ pop ============ -->
-  <section class="panel card" id="pop" role="tabpanel">
-    <div class="pop-head">
-      <span class="pop-count"><span id="popNum">0</span> <span class="total">/ <span id="popTotal">90</span></span></span>
-      <button type="button" class="big ghost" id="refill" style="margin:0;padding:8px 16px;font-size:.84rem" data-t="again"></button>
+  <!-- ============ play ============ -->
+  <section class="panel card" id="play" role="tabpanel">
+    <div class="subtabs" id="subtabs">
+      <button type="button" data-game="gPop" class="on" data-t="gBubbles"></button>
+      <button type="button" data-game="gRipple" data-t="gRipples"></button>
+      <button type="button" data-game="gDraw" data-t="gDraw"></button>
+      <button type="button" data-game="gCatch" data-t="gCatch"></button>
     </div>
-    <div class="bubbles" id="bubbles"></div>
-    <p class="pop-done" id="popDone" data-t="popDone"></p>
-    <p class="hint" data-t="popHint"></p>
+
+    <div class="game on" id="gPop">
+      <div class="pop-head">
+        <span class="pop-count"><span id="popNum">0</span> <span class="total">/ <span id="popTotal">90</span></span></span>
+        <button type="button" class="big ghost" id="refill" style="margin:0;padding:8px 16px;font-size:.84rem" data-t="again"></button>
+      </div>
+      <div class="bubbles" id="bubbles"></div>
+      <p class="pop-done" id="popDone" data-t="popDone"></p>
+      <p class="hint" data-t="popHint"></p>
+    </div>
+
+    <div class="game" id="gRipple">
+      <canvas class="surf" id="rippleCv"></canvas>
+      <p class="hint" data-t="rippleHint"></p>
+    </div>
+
+    <div class="game" id="gDraw">
+      <canvas class="surf" id="drawCv"></canvas>
+      <p class="hint" data-t="drawHint"></p>
+    </div>
+
+    <div class="game" id="gCatch">
+      <div class="sky" id="catchSky"></div>
+      <p class="hint" data-t="catchHint"></p>
+    </div>
   </section>
 
   <!-- ============ vent ============ -->
@@ -625,7 +762,7 @@
       tabNow: "ahora",
       tabLetter: "carta",
       tabBreathe: "respirar",
-      tabPop: "explotar",
+      tabPlay: "juegos",
       tabVent: "soltarlo",
       tabGround: "aquí",
 
@@ -656,6 +793,15 @@
       again: "otra ronda",
       popDone: "no queda ninguna. ¿otra?",
       popHint: "dale hasta que se te pase. no hay forma de hacerlo mal.",
+      gBubbles: "burbujas",
+      gRipples: "ondas",
+      gDraw: "dibujar",
+      gCatch: "atrapar",
+      rippleHint: "toca la superficie. o arrastra el dedo sin levantarlo.",
+      drawHint: "dibuja lo que sea. se va borrando solo, no queda nada.",
+      catchHint: "toca las luces cuando aparezcan. no hay forma de perder.",
+      soundOn: "sonido encendido",
+      soundOff: "sonido apagado",
 
       ventBtn: "soltarlo",
       ventGone: "ya no está.",
@@ -678,7 +824,7 @@
       tabNow: "now",
       tabLetter: "letter",
       tabBreathe: "breathe",
-      tabPop: "pop",
+      tabPlay: "games",
       tabVent: "let it go",
       tabGround: "here",
 
@@ -709,6 +855,15 @@
       again: "another round",
       popDone: "none left. again?",
       popHint: "go until it passes. there's no way to do this wrong.",
+      gBubbles: "bubbles",
+      gRipples: "ripples",
+      gDraw: "draw",
+      gCatch: "catch",
+      rippleHint: "tap the surface. or drag a finger without lifting it.",
+      drawHint: "draw anything. it fades on its own, nothing stays.",
+      catchHint: "tap the lights as they show up. there's no way to lose.",
+      soundOn: "sound on",
+      soundOff: "sound off",
 
       ventBtn: "let it go",
       ventGone: "it's gone now.",
@@ -737,6 +892,71 @@
     return pack[key] != null ? pack[key] : STR.en[key];
   };
 
+  /* ---------- sound ---------- */
+  var soundOn = true;
+  try {
+    if (localStorage.getItem("calm-sound") === "off") soundOn = false;
+  } catch (e) {}
+
+  var audioCtx = null;
+  var sndBtn = document.getElementById("sndBtn");
+
+  function audio() {
+    if (!soundOn) return null;
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { audioCtx = new AC(); } catch (e) { return null; }
+    }
+    if (audioCtx.state === "suspended") {
+      try { audioCtx.resume(); } catch (e) {}
+    }
+    return audioCtx;
+  }
+
+  function tone(freq, to, dur, type, vol, delay) {
+    var ctx = audio();
+    if (!ctx) return;
+    var t0 = ctx.currentTime + (delay || 0);
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t0);
+    if (to) osc.frequency.exponentialRampToValueAtTime(to, t0 + dur);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.04);
+  }
+
+  function sndPop() {
+    var f = 620 + Math.random() * 280;
+    tone(f, f * 0.4, 0.09, "triangle", 0.12);
+  }
+  function sndDrop() {
+    tone(310 + Math.random() * 70, 150, 0.7, "sine", 0.05);
+  }
+  function sndCatch() {
+    var f = 780 + Math.random() * 180;
+    tone(f, f, 0.1, "sine", 0.075);
+    tone(f * 1.5, f * 1.5, 0.16, "sine", 0.045, 0.035);
+  }
+
+  function paintSound() {
+    sndBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    sndBtn.setAttribute("aria-label", T(soundOn ? "soundOn" : "soundOff"));
+  }
+
+  sndBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem("calm-sound", soundOn ? "on" : "off"); } catch (e) {}
+    paintSound();
+    if (soundOn) tone(680, 680, 0.1, "sine", 0.08);
+  });
+
   /* ---------- language ---------- */
   var langBtns = document.querySelectorAll(".lang button");
   var ventText = document.getElementById("ventText");
@@ -756,6 +976,7 @@
     });
     breatheBtn.textContent = breathing ? T("stop") : T("start");
     if (!breathing) phaseEl.textContent = T("ready");
+    paintSound();
     renderTimer();
   }
 
@@ -777,9 +998,12 @@
         b.classList.toggle("on", on);
         b.setAttribute("aria-selected", on ? "true" : "false");
       });
+      var target = btn.getAttribute("data-panel");
       document.querySelectorAll(".panel").forEach(function (p) {
-        p.classList.toggle("on", p.id === btn.getAttribute("data-panel"));
+        p.classList.toggle("on", p.id === target);
       });
+      if (target === "play") showGame(currentGame);
+      else stopAllGames();
     });
   });
 
@@ -885,6 +1109,7 @@
     b.classList.add("popped");
     popped += 1;
     popNum.textContent = popped;
+    sndPop();
     if (navigator.vibrate) { try { navigator.vibrate(9); } catch (err) {} }
     if (popped === TOTAL) popDone.classList.add("show");
   }
@@ -938,6 +1163,222 @@
     step.addEventListener("click", function () {
       step.classList.toggle("done");
     });
+  });
+
+  /* ---------- games: switcher ---------- */
+  var subBtns = document.querySelectorAll("#subtabs button");
+  var gameEls = document.querySelectorAll(".game");
+  var currentGame = "gPop";
+
+  function stopAllGames() {
+    stopRipple();
+    stopDraw();
+    stopCatch();
+  }
+
+  function showGame(id) {
+    currentGame = id;
+    gameEls.forEach(function (g) { g.classList.toggle("on", g.id === id); });
+    subBtns.forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-game") === id); });
+    stopAllGames();
+    if (id === "gRipple") { sizeRipple(); runRipple(); }
+    else if (id === "gDraw") { sizeDraw(); runDraw(); }
+    else if (id === "gCatch") { runCatch(); }
+  }
+
+  subBtns.forEach(function (b) {
+    b.addEventListener("click", function () { showGame(b.getAttribute("data-game")); });
+  });
+
+  /* ---------- game: ripples ---------- */
+  var rippleCv = document.getElementById("rippleCv");
+  var rctx = rippleCv.getContext("2d");
+  var rippleSize = { w: 300, h: 260 };
+  var ripples = [];
+  var rippleRAF = null;
+  var lastDrop = 0;
+
+  function sizeRipple() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rect = rippleCv.getBoundingClientRect();
+    rippleSize.w = rect.width || 300;
+    rippleSize.h = rect.height || 260;
+    rippleCv.width = Math.round(rippleSize.w * dpr);
+    rippleCv.height = Math.round(rippleSize.h * dpr);
+    rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function addRipple(x, y) {
+    var now = performance.now();
+    var prev = ripples[ripples.length - 1];
+    if (prev && now - prev.t < 55 && Math.abs(x - prev.x) + Math.abs(y - prev.y) < 18) return;
+    ripples.push({ x: x, y: y, r: 2, a: 1, t: now });
+    if (now - lastDrop > 110) { lastDrop = now; sndDrop(); }
+  }
+
+  function runRipple() {
+    if (rippleRAF) return;
+    var step = function () {
+      rctx.clearRect(0, 0, rippleSize.w, rippleSize.h);
+      for (var i = ripples.length - 1; i >= 0; i--) {
+        var p = ripples[i];
+        p.r += 2.4;
+        p.a -= 0.011;
+        if (p.a <= 0) { ripples.splice(i, 1); continue; }
+        rctx.beginPath();
+        rctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        rctx.strokeStyle = "rgba(226, 154, 122, " + (p.a * 0.6).toFixed(3) + ")";
+        rctx.lineWidth = 1.4;
+        rctx.stroke();
+      }
+      rippleRAF = requestAnimationFrame(step);
+    };
+    rippleRAF = requestAnimationFrame(step);
+  }
+
+  function stopRipple() {
+    if (rippleRAF) cancelAnimationFrame(rippleRAF);
+    rippleRAF = null;
+    ripples.length = 0;
+    rctx.clearRect(0, 0, rippleSize.w, rippleSize.h);
+  }
+
+  function rippleAt(e) {
+    var rect = rippleCv.getBoundingClientRect();
+    addRipple(e.clientX - rect.left, e.clientY - rect.top);
+  }
+
+  rippleCv.addEventListener("pointerdown", function (e) {
+    try { rippleCv.setPointerCapture(e.pointerId); } catch (err) {}
+    rippleAt(e);
+  });
+  rippleCv.addEventListener("pointermove", function (e) {
+    if (e.buttons || e.pressure > 0) rippleAt(e);
+  });
+
+  /* ---------- game: draw ---------- */
+  var drawCv = document.getElementById("drawCv");
+  var dctx = drawCv.getContext("2d");
+  var drawSize = { w: 300, h: 260 };
+  var drawRAF = null;
+  var drawing = false;
+  var lastPt = null;
+
+  function sizeDraw() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rect = drawCv.getBoundingClientRect();
+    drawSize.w = rect.width || 300;
+    drawSize.h = rect.height || 260;
+    drawCv.width = Math.round(drawSize.w * dpr);
+    drawCv.height = Math.round(drawSize.h * dpr);
+    dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dctx.lineCap = "round";
+    dctx.lineJoin = "round";
+    dctx.lineWidth = 6;
+    dctx.strokeStyle = "rgba(194, 100, 80, 0.5)";
+    dctx.fillStyle = "rgba(194, 100, 80, 0.5)";
+  }
+
+  function runDraw() {
+    if (drawRAF) return;
+    var step = function () {
+      dctx.fillStyle = "rgba(255, 253, 251, 0.035)";
+      dctx.fillRect(0, 0, drawSize.w, drawSize.h);
+      drawRAF = requestAnimationFrame(step);
+    };
+    drawRAF = requestAnimationFrame(step);
+  }
+
+  function stopDraw() {
+    if (drawRAF) cancelAnimationFrame(drawRAF);
+    drawRAF = null;
+    drawing = false;
+  }
+
+  function drawPoint(e) {
+    var rect = drawCv.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  drawCv.addEventListener("pointerdown", function (e) {
+    try { drawCv.setPointerCapture(e.pointerId); } catch (err) {}
+    drawing = true;
+    lastPt = drawPoint(e);
+    dctx.beginPath();
+    dctx.arc(lastPt.x, lastPt.y, 3, 0, Math.PI * 2);
+    dctx.fillStyle = "rgba(194, 100, 80, 0.5)";
+    dctx.fill();
+  });
+  drawCv.addEventListener("pointermove", function (e) {
+    if (!drawing || !lastPt) return;
+    var p = drawPoint(e);
+    dctx.beginPath();
+    dctx.moveTo(lastPt.x, lastPt.y);
+    dctx.lineTo(p.x, p.y);
+    dctx.stroke();
+    lastPt = p;
+  });
+  ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) {
+    drawCv.addEventListener(ev, function () { drawing = false; lastPt = null; });
+  });
+
+  /* ---------- game: catch the lights ---------- */
+  var catchSky = document.getElementById("catchSky");
+  var catchNumEl = null;
+  var catchTimer = null;
+  var caught = 0;
+
+  function spawnLight() {
+    if (!catchSky.clientWidth) return;
+    var w = catchSky.clientWidth;
+    var h = catchSky.clientHeight;
+    var size = 26 + Math.random() * 16;
+
+    var el = document.createElement("div");
+    el.className = "light";
+    el.style.width = size + "px";
+    el.style.height = size + "px";
+    el.style.marginLeft = (-size / 2) + "px";
+    el.style.marginTop = (-size / 2) + "px";
+    el.style.left = (size + Math.random() * (w - size * 2)) + "px";
+    el.style.top = (h * 0.4 + Math.random() * h * 0.5) + "px";
+    el.style.animationDuration = (4.6 + Math.random() * 2.4).toFixed(2) + "s";
+
+    el.addEventListener("animationend", function () { el.remove(); });
+    el.addEventListener("pointerdown", function (e) {
+      e.stopPropagation();
+      caught += 1;
+      if (catchNumEl) catchNumEl.textContent = caught;
+      sndCatch();
+      el.classList.add("caught");
+      setTimeout(function () { el.remove(); }, 320);
+    });
+
+    catchSky.appendChild(el);
+  }
+
+  function runCatch() {
+    if (catchTimer) return;
+    catchSky.innerHTML = "";
+    catchNumEl = document.createElement("span");
+    catchNumEl.className = "catch-count";
+    catchNumEl.textContent = "0";
+    catchSky.appendChild(catchNumEl);
+    caught = 0;
+    spawnLight();
+    catchTimer = setInterval(spawnLight, 850);
+  }
+
+  function stopCatch() {
+    if (catchTimer) clearInterval(catchTimer);
+    catchTimer = null;
+    catchSky.innerHTML = "";
+    catchNumEl = null;
+  }
+
+  window.addEventListener("resize", function () {
+    if (currentGame === "gRipple" && rippleRAF) { sizeRipple(); }
+    if (currentGame === "gDraw" && drawRAF) { sizeDraw(); }
   });
 
   /* ---------- cool-down timer ---------- */
@@ -1011,8 +1452,9 @@
   });
 
   document.getElementById("toBubbles").addEventListener("click", function () {
-    var b = document.querySelector('#tabs button[data-panel="pop"]');
+    var b = document.querySelector('#tabs button[data-panel="play"]');
     if (b) b.click();
+    showGame("gPop");
   });
 
   /* ---------- go ---------- */
