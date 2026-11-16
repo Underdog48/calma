@@ -5,6 +5,7 @@ const CACHE = "tranquilo-v1";
 const ASSETS = [
   "./",
   "./index.html",
+  "./payload.bin",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
