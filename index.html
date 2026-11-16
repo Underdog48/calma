@@ -531,6 +531,23 @@
   }
 
   /* ---------- confetti ---------- */
+  .msg {
+    display: inline-block;
+    font-size: .98rem;
+    padding: 13px 30px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background: rgba(194, 100, 80, .09);
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .16s, filter .2s;
+  }
+  .msg:active { transform: scale(.97); }
+  .msg[hidden] { display: none; }
+  .letter-foot { text-align: center; }
+
   .pads {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -760,6 +777,7 @@
     <div class="now-actions">
       <button type="button" class="big" id="timerBtn"></button>
       <button type="button" class="big ghost" id="toBubbles" data-t="nowBubbles"></button>
+      <a class="msg" id="msgNow" href="#" hidden data-t="msgMe"></a>
     </div>
     <p class="hint" data-t="nowHint"></p>
   </section>
@@ -771,6 +789,9 @@
       <p data-t="p2"></p>
       <p data-t="p3"></p>
       <p class="sign" data-t="sign"></p>
+      <div class="letter-foot">
+        <a class="msg" id="msgLetter" href="#" hidden data-t="msgMe"></a>
+      </div>
     </div>
   </section>
 
@@ -921,6 +942,8 @@
       nowLine: "si te subió de golpe: no hagas nada durante diez minutos. no tienes que calmarte, solo quedarte.",
       nowDone: "ya pasó el pico. siempre pasa. toma agua, y si quieres escríbeme.",
       nowBubbles: "explotar burbujas",
+      msgMe: "escríbeme",
+      msgBody: "estoy aquí.",
       nowHint: "la rabia baja sola. no hay que empujarla ni entenderla, solo aguantar el rato.",
       tStart: "empezar",
       tPause: "pausa",
@@ -989,6 +1012,8 @@
       nowLine: "if it hit you all at once: do nothing for ten minutes. you don't have to calm down, you just have to stay.",
       nowDone: "the peak has passed. it always does. drink some water, and text me if you want.",
       nowBubbles: "pop bubbles",
+      msgMe: "text me",
+      msgBody: "i'm here.",
       nowHint: "anger comes down on its own. you don't have to push it or understand it, just outlast it.",
       tStart: "start",
       tPause: "pause",
@@ -1049,6 +1074,25 @@
     var pack = STR[lang];
     return pack[key] != null ? pack[key] : STR.en[key];
   };
+
+  /* ---------- text me ----------
+     Put your number here and the buttons appear. Digits only, with the
+     country code: "15551234567". Leave it empty and the buttons stay hidden.
+     Pon tu número aquí y aparecen los botones. Solo números, con el código
+     de país: "15551234567". Si lo dejas vacío, los botones no se muestran. */
+  var MY_NUMBER = "";
+
+  function wireMessageLinks() {
+    var digits = String(MY_NUMBER).replace(/[^0-9]/g, "");
+    document.querySelectorAll(".msg").forEach(function (el) {
+      if (!digits) {
+        el.setAttribute("hidden", "");
+        return;
+      }
+      el.removeAttribute("hidden");
+      el.href = "sms:+" + digits + "?&body=" + encodeURIComponent(T("msgBody"));
+    });
+  }
 
   /* ---------- sound ---------- */
   var soundOn = true;
@@ -1135,6 +1179,7 @@
     breatheBtn.textContent = breathing ? T("stop") : T("start");
     if (!breathing) phaseEl.textContent = T("ready");
     paintSound();
+    wireMessageLinks();
     renderTimer();
   }
 
